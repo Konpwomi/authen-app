@@ -1,6 +1,8 @@
 import { Router } from "express";
 import { dashboardUser, loginUser, registerUser } from "../controllers/authController";
 import { verifyToken } from "../middleware/authMIddleware";
+import dotenv from 'dotenv'; 
+dotenv.config();
 
 const router = Router();
 

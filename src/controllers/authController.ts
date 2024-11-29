@@ -1,8 +1,6 @@
 import { Request, Response } from "express";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import dotenv from 'dotenv'; 
-dotenv.config();
 
 import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
@@ -25,8 +23,14 @@ export const registerUser = async (req: Request, res: Response): Promise<void> =
       const newUser = await prisma.user.create({
         data: { email,  password: hashedPassword, fullName }
       });
+
+      const token = jwt.sign(
+        { userId: newUser.id, email: newUser.email },
+        process.env.JWT_SECRET!, // Your JWT secret from environment variables
+        { expiresIn: process.env.JWT_EXPIRES_IN } // Optional: Token expiry time
+      );
   
-      res.status(201).json({ message: "User registered successfully.", user: newUser });
+      res.status(201).json({ message: "User registered successfully.",token, user: newUser });
       return;
     } catch (error) {
       res.status(500).json({ message: "Internal server error."});
